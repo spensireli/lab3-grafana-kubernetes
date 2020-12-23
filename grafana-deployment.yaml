@@ -29,8 +29,29 @@ spec:
         volumeMounts:
           - name: grafana-pv-storage
             mountPath: /var/lib/grafana
+          - name: grafana-config
+            mountPath: /etc/grafana/
+          - name: grafana-cert
+            mountPath: /etc/ssl/grafana/crt/
+          - name: grafana-key
+            mountPath: /etc/ssl/grafana/key/
       volumes:
         - name: grafana-pv-storage
           persistentVolumeClaim:
             claimName: pv0006-grafana
+        - name: grafana-config
+          configMap:
+            name: grafana-config
+        - name: grafana-cert
+          secret:
+            secretName: grafana-tls
+            items:
+              - key: tls.crt
+                path: certificate.csr
+        - name: grafana-key
+          secret:
+            secretName: grafana-tls
+            items:
+              - key: tls.key
+                path: private_key.key
 
