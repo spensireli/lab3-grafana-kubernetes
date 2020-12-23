@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+        namespace: grafana
+    spec:
+      containers:
+      - name: grafana
+        env:
+        - name: GF_INSTALL_PLUGINS
+          value: "grafana-clock-panel,grafana-simple-json-datasource"
+        - name: GF_PATHS_DATA
+          value: "/var/lib/grafana"
+        image: grafana/grafana:7.3.6-ubuntu
+        ports:
+          - name: https-port
+            containerPort: 3000
+        volumeMounts:
+          - name: grafana-pv-storage
+            mountPath: /var/lib/grafana
+      volumes:
+        - name: grafana-pv-storage
+          persistentVolumeClaim:
+            claimName: pv0006-grafana
+
